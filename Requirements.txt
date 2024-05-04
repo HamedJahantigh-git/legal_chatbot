@@ -2,5 +2,7 @@
 datasets
 pandas
 indexed_gzip
-jsonlib
-
+# json
+matrix-nio[e2e]
+opsdroid
+python-dotenv
