@@ -1,6 +1,6 @@
 #dataset
 datasets
 pandas
-gzio
-json
+indexed_gzip
+jsonlib
 
