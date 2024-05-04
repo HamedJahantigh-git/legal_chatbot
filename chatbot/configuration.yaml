@@ -1,0 +1,18 @@
+connectors:
+  matrix:
+    # Required
+    mxid:  #id goes here. bot_{funⅽtionaⅼity_of_the_bot}
+    password:  #password goes here. 
+    rooms:
+      'main': '#gp18-test:matrix.org'
+    enable_encryption: True
+    # Optional
+    homeserver: "https://matrix.org"
+    nick: "NLP_HW2_18"  # The nick will be set on startup
+
+skills:
+  - name: help
+    path: skills/help_skill.py
+
+  - name: accept_invite
+    path: skills/accept_invite.py
