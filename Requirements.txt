@@ -6,3 +6,7 @@ indexed_gzip
 matrix-nio[e2e]
 opsdroid
 python-dotenv
+
+BeautifulSoup4
+requests
+tqdm
