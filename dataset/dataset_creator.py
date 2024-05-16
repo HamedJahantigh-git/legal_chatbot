@@ -6,7 +6,9 @@ import gzip
 import json
 import pandas as pd
 
-import os
+from hazm import *
+
+import os, re
 
 class LegalDatasetCreator(ABC):
     @abstractmethod
@@ -46,6 +48,9 @@ class LawDatasetCreator():
  # Dataset PreProcessor for notbook
  
 class LegalDatasetPreProcessor():
+    
+    def __init__(self) -> None:
+        self._normalizer = Normalizer()
      
     def gz_to_df(self, path: str) -> pd.DataFrame:
         with gzip.open(path, 'rb') as f:
@@ -57,7 +62,7 @@ class LegalDatasetPreProcessor():
         df = pd.json_normalize(json_data)
         return(df)
     
-    def merge_txt_files(folder_path:str, output_file:str, separator:str):
+    def merge_txt_files(self, folder_path:str, output_file:str, separator:str):
         content = ''
         for filename in os.listdir(folder_path):
             if filename.endswith('.txt'):
@@ -67,4 +72,37 @@ class LegalDatasetPreProcessor():
                     content = content + separator
         with open(output_file, 'w', encoding='utf-8') as outfile:
             outfile.write(content)
+            
+    def case_to_df(self, data: list) -> pd.DataFrame:
+        title, number, date, type, text = [], [], [], [], []
+        data = [self._normalizer.normalize(text) for text in data]
+        for case in data:
+            index = [match.start() for match in re.finditer(r'\n', case)]
+            title.append(case[7:index[0]])
+            number.append(case[index[0]+21:index[1]])
+            date.append(case[index[1]+21:index[2]])
+            type.append(case[index[2]+11:index[3]])
+            text.append(case[index[3]+1:])
+        df = pd.DataFrame({
+            "title": title,
+            "number": number,
+            "date": date,
+            "type": type,
+            "text": text
+        })
+        return df
+    
+    def ekhtebar_news(self, data: pd.DataFrame) -> pd.DataFrame:
+        ek_news = data[data["category.major"] == "News"]\
+            [["title", "content", "date", "url", "tags", "category.original"]]
+        ek_news = ek_news.rename(columns={'content': 'content_html'})
+        content = [self._normalizer.normalize(''.join([item['text'] for item in data])) for data in ek_news.content_html]
+
+        # for data in ek_news.content_html:
+        #     content = [''.join([item['text'] for item in data])) ]
+        ek_news["content"] = content
+        return ek_news
+
+        
+            
       

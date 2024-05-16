@@ -10,3 +10,8 @@ python-dotenv
 BeautifulSoup4
 requests
 tqdm
+
+hazm
+spacy
+
+rank_bm25

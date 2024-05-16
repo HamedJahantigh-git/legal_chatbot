@@ -1,21 +1,21 @@
 
 # Dataset Interface
 from abc import ABC, abstractmethod
+import pandas as pd
 
 class LegalDataset(ABC):
-    @abstractmethod
-    def method1(self):
-        pass
-
-    @abstractmethod
-    def method2(self):
-        pass
+    
+    def __init__(self) -> None:
+        self._df = pd.DataFrame()
+    
+    def get_df(self):
+        return self._df
 
 
 
 # Dataset Concrete 
     
-class CaseDataset():
+class CaseDataset(LegalDataset):
     pass
     
 class NewsDataset():
