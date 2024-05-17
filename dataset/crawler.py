@@ -81,3 +81,31 @@ class TelegramCrawler():
         for div in divs_with_text_class:
             text_content = div.get_text(separator='\n')
             print(text_content)
+    
+  
+
+    def are_substrings_not_in_string(self, main_string, substrings):
+        for substring in substrings:
+            if substring in main_string:
+                return False
+        return True
+
+    def channel_html_to_df(self, path:str) -> pd.DataFrame:
+        result = []
+        with open(path, 'r', encoding='utf-8') as file:
+            html_content = file.read()
+        soup = BeautifulSoup(html_content, 'html.parser')
+        divs_with_text_class = soup.find_all('div', class_='text')
+        for div in divs_with_text_class:
+            text_content = div.get_text(separator='\n')
+            result.append(text_content)
+        p =[]
+        for r in result:
+            k = r.split('\n \n')
+            p.extend(k)
+        not_valid_string = ["آدرس:\nتهران", 'حقوقدانان زبده']
+        result=[]
+        for r in p:
+            if self.are_substrings_not_in_string(r, not_valid_string) :
+                result.append(r)
+        return pd.DataFrame({"text": result})

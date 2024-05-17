@@ -18,8 +18,8 @@ class BM25Retrival():
         self._is_process = True
         
     def remove_stopwords(self, text_tok: str):
-        [tok for tok in text_tok if tok not in self._stopwords] 
-        return
+        return [tok for tok in text_tok if tok not in self._stopwords] 
+        
 
     def get_similar(self, query: str) -> list:
         if not self._is_process:
