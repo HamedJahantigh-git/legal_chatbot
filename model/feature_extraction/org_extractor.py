@@ -5,8 +5,8 @@ import re
 class org_extractor:
     
     DICT_PATH = 'resource/org/orgs.txt'
-    TAGGER_PATH = 'resource/pos_tagger.model'
-    CHUNKER_PATH = 'resource/chunker.model'
+    TAGGER_PATH = 'resource/hazm_model/pos_tagger.model'
+    CHUNKER_PATH = 'resource/hazm_model/chunker.model'
     ROLES = ['NP', 'PP', 'VP', 'ADJP', 'ADVP']
 
     content = open(DICT_PATH, 'r+').read().split('\n')
@@ -28,7 +28,7 @@ class org_extractor:
         chunks = tree2brackets(self.chunker.parse(tagged))
 
         chunked = [[c.strip(), c.split()[-1]] for c in\
-                    [re.sub(r'\.|،|]*|,|;|/|[۰-۹]+|\)|\(|-', '', chunk).strip() for chunk in chunks.split('[')] if len(c.split()) >= 2]
+                    [re.sub(r'\.|،|]*|,|;|/|[۰-۹]+|\)|\(|-|«|»', '', chunk).strip() for chunk in chunks.split('[')] if len(c.split()) >= 2]
 
         for c in chunked:
             c[0] = c[0].replace('\u200c', ' ')
@@ -98,21 +98,22 @@ class org_extractor:
             
             output.append(t)
 
-
         result = []
         for ng, otp in zip(ngs, output):
             for o in otp:
                 mtch = o.group(0)
                 if mtch in ng and mtch not in result:
                     result.append(mtch)
-
+        
         result = sorted(result, key=len, reverse=True)
         defined_terms = []
 
         for term in result:
             if not any(term in other for other in defined_terms):
-                
-                defined_terms.append(term)
+                for m in re.finditer(term, text):
+                    defined_terms.append((term, (m.start(), m.end())))
+        
+        return defined_terms
 
 
 # text =  'طبق ماده 15 (1) دستورالعمل‌های انطباق با مقررات،«کمیته» باید حداکثر تا 31 اردیبهشت هر سال تشکیل جلسه دهد '
