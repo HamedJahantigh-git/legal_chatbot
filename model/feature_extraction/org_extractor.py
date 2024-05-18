@@ -110,7 +110,7 @@ class org_extractor:
 
         for term in result:
             if not any(term in other for other in defined_terms):
-                for m in re.finditer(term, text):
+                for m in re.finditer(term, self.text):
                     defined_terms.append((term, (m.start(), m.end())))
         
         return defined_terms
