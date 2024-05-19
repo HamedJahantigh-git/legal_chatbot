@@ -107,12 +107,12 @@ class org_extractor:
         
         result = sorted(result, key=len, reverse=True)
         defined_terms = []
-
         for term in result:
             if not any(term in other for other in defined_terms):
                 for m in re.finditer(term, self.text):
-                    defined_terms.append((term, (m.start(), m.end())))
-        
+                    if term not in defined_terms:
+                        # defined_terms.append((term, m.start(), m.end()))
+                        defined_terms.append(term)  
         return defined_terms
 
 
