@@ -17,8 +17,8 @@ class law_extractor(object):
 
     def senTokenizer(self, text):
 
-        tagger = POSTagger(model='resource/pos_tagger.model')
-        chunker = Chunker(model='resource/chunker.model')
+        tagger = POSTagger(model='resource/hazm_model/pos_tagger.model')
+        chunker = Chunker(model='resource/hazm_model/chunker.model')
 
         chunks = []
 
