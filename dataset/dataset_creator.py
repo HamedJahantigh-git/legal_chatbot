@@ -160,5 +160,6 @@ class LawTxetPreProcessor():
         if not self._is_df:
             self.build_df()
         return self._law_name_df, self._madeh_df 
+
         
              

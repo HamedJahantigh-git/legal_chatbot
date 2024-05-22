@@ -1,6 +1,7 @@
 #dataset
 datasets
 pandas
+numpy
 indexed_gzip
 # json
 matrix-nio[e2e]

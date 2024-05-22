@@ -1,116 +1,54 @@
+from typing import List, Tuple
 from hazm import *
-import sacrebleu
 
-class law_extractor(object):
-
-    listOfLaw = []
-
-    with open('resource/law/law_clean_list.txt', 'r', encoding='utf-8') as file:
-        laws = file.readlines()
-
-    for law in laws:
-        listOfLaw.append(law)
-
-    keywords = [
-        'قانون' , 'قوانین' , 'آیین نامه'  , 'آیین‌نامه' , 'اساس نامه' , 'اساس‌نامه'
-    ]
-
-    def senTokenizer(self, text):
-
-        tagger = POSTagger(model='resource/hazm_model/pos_tagger.model')
-        chunker = Chunker(model='resource/hazm_model/chunker.model')
-
-        chunks = []
-
-        sentences = sent_tokenize(text)
-
-        for sentence in sentences:
-
-            words = word_tokenize(sentence)
-            tagged_words = tagger.tag(words)
-
-            tree = chunker.parse(tagged_words)
-
-            for subtree in tree.subtrees():
-                if subtree.label() in ['NP', 'ADVP']:
-                    chunk_text = tree2brackets(subtree)
-
-                    chunks.append(chunk_text)
-
-        return chunks
-
-    def find_law(self, tokens):
-        dates = []
-        i = 0
-        while i < len(tokens):
-            chunk = tokens[i]
-
-            if any(key in chunk for key in self.keywords):
-                dates.append(chunk)
-
-            i += 1  
-        return dates
-
-    def check_law(self, law):
-        splitedLaw = law.split()
-        if splitedLaw[-1] in self.keywords:
-            return False
-        else:
-            return True
-
-    def selected_law(self, law):
-        splitedLaw = law.split()
-        for splited in splitedLaw:
-            if splited in self.keywords:
-                index = splitedLaw.index(splited)
+class LawExtractor():
+    
+    def __init__(
+        self, normalizer = Normalizer,
+        tokenizer = word_tokenize, 
+        pos_tagger = POSTagger(model='resource/hazm_model/pos_tagger.model'),
+        keywords = [
+        'قانون' , 'قوانین' , 'آیین نامه'  , 'آیین‌نامه' ,
+        'اساس نامه' , 'اساس‌نامه']) -> None:
         
-        return ' '.join(splitedLaw[index:])
-
-    def bleu_score(self, candidate, references):
-
-        scores = []
+        self._normalizer = normalizer()
+        self._tokenizer = tokenizer
+        self._pos_tagger = pos_tagger
+        self._keywords = keywords
         
-        for ref in references:
-            bleu = sacrebleu.corpus_bleu([candidate], [[ref]])
-            scores.append(bleu.score)
-        
-
-        max_index = scores.index(max(scores))
-        return max_index, scores[max_index] , scores
-
-    def find_in_text(self, text , law):
-
-        for key in self.keywords:
-            if key in law:
-                findKey = key
-                break
-        
-        start_index = text.find(findKey)
-        if start_index == -1:
-            return -1, -1 
-        
-        end_index = start_index + len(law) - 1
-
-        return start_index, end_index
-
-    def __init__(self, text):
-        returnList = []
-        tokenized_sentences = self.senTokenizer(text)
-        laws = self.find_law(tokenized_sentences)
-
-        for law in laws:
-            if self.check_law(law):
-                law = self.selected_law(law)
-                myList = []
-                start , end = self.find_in_text(text , law)
-                myList.append((law, start, end))
-                returnList.append(myList)
-                # ind, score , scores = self.bleu_score(law , self.listOfLaw)
-                # l = self.listOfLaw[ind]
-                # print(l)
-                # print(ind , score)
-        self.result = returnList
-
-# text = "این یک قانون جدید است که به تصویب رسیده است. این قوانین باید رعایت شوند."
-# extractor = law_extractor(text)
-# print(extractor.result)
+    def extract(self, input: str) -> List[Tuple[str, int, int]]:
+        normal_text = self._normalizer.normalize(input)
+        normal_text = normal_text.replace("،", " ،")
+        tokens = self._tokenizer(normal_text)
+        pos_tag = self._pos_tagger.tag(tokens)
+        phrases = self._pos_analysis(pos_tag)
+        return self._get_span(input, phrases)
+    
+    def _pos_analysis(self, pos_list: List) -> List:
+        accept_tok = [index for index, tok in enumerate(pos_list)
+                      if tok[0] in self._keywords and "EZ" in tok[1]]
+        result =[]
+        for i in accept_tok:
+            index = i+1
+            while ("EZ" in pos_list[index][1])or\
+                ("EZ" in pos_list[index-1][1]):
+                index += 1    
+            while (pos_list[index][0] == "،"  and (pos_list[index+2][0] in ["،", 'و']))or\
+                (pos_list[index][0] == "و"  and (pos_list[index-2][0] == "،"))or\
+                (pos_list[index-1][0] == "،" and (pos_list[index+1][0] in ["،", 'و'])or\
+                (pos_list[index-1][0] == "و" )):
+                index += 1
+            result.append(" ".join([word for word, tag in pos_list[i:index]]))
+        return result
+    
+    def _get_span(self, input: str, phrases: List[str]) -> List[Tuple[str, int, int]]:
+        index = 0
+        result = []
+        for phrase in phrases:
+            start_search_text = phrase[:phrase.find(" ")]
+            start_index = input.find(start_search_text, index)
+            end_search_text = phrase[phrase.rfind(" "):]
+            end_index = input.find(end_search_text, start_index)
+            index = end_index+len(end_search_text)
+            result.append((phrase, start_index,index))
+        return result

@@ -16,6 +16,3 @@ class FeatureExtrator():
     def doce_type_detection():
         pass
     
-
-class DocSpliter():
-    pass

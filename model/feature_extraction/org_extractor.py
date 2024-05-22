@@ -5,11 +5,11 @@ import re
 class org_extractor:
     
     DICT_PATH = 'resource/org/orgs.txt'
-    TAGGER_PATH = 'resource/hazm_model/pos_tagger.model'
+    TAGGER_PATH = 'resource/hazm_model/postagger.model'
     CHUNKER_PATH = 'resource/hazm_model/chunker.model'
     ROLES = ['NP', 'PP', 'VP', 'ADJP', 'ADVP']
 
-    content = open(DICT_PATH, 'r+').read().split('\n')
+    content = open(DICT_PATH, 'r+').readlines()
     normalizer = Normalizer()
     tagger = POSTagger(model=TAGGER_PATH)
     chunker = Chunker(model=CHUNKER_PATH)
@@ -107,12 +107,12 @@ class org_extractor:
         
         result = sorted(result, key=len, reverse=True)
         defined_terms = []
-
         for term in result:
             if not any(term in other for other in defined_terms):
                 for m in re.finditer(term, self.text):
-                    defined_terms.append((term, (m.start(), m.end())))
-        
+                    if term not in defined_terms:
+                        # defined_terms.append((term, m.start(), m.end()))
+                        defined_terms.append(term)  
         return defined_terms
 
 
