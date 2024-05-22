@@ -11,7 +11,7 @@ from operator import itemgetter
 import warnings
 
 class BM25Retrival():
-    def __init__(self, data: list, stop_words: list, tokenizer):
+    def __init__(self, data: list, stop_words = [], tokenizer = word_tokenize):
         self._data = data
         self._stopwords = stop_words
         self._tokenizer = tokenizer
@@ -30,7 +30,7 @@ class BM25Retrival():
         return [tok for tok in text_tok if tok not in self._stopwords] 
         
 
-    def get_similar(self, query: str) -> list:
+    def get_similar_score(self, query: str) -> list:
         if not self._is_process:
             self.preprocess()
         score = self._model.get_scores(self._tokenizer(query)).tolist()
@@ -38,22 +38,45 @@ class BM25Retrival():
         sorted_score = sorted(score_dic, key=lambda x: x["score"], reverse=True)
         return sorted_score
     
+    def get_similar_text(self, query: str, num: int) -> list:
+        result = []
+        if not self._is_process:
+            self.preprocess()
+        sorted_score = self.get_similar_score(query)[:num+1]
+        top_score = sorted_score[0]["score"]
+        for i in range(1,num+1):
+            text_id = sorted_score[i]["corpus_id"]
+            score = sorted_score[i]["score"]
+            result.append((self._data[text_id],f"{100*score/top_score:.2f}" ))
+        return result
+    
+    def create_similarity_matrix(self, save_path: str) -> None:
+        if not self._is_process:
+            self.preprocess()
+        size = len(self._data)
+        result_matrix = np.ones((size, size))
+        for i in tqdm(range(size)):
+            result_matrix[i,:] = self._model.get_scores(self._text_tok[i])
+        np.save(save_path, result_matrix)
+    
+    
 class BleuRetrieval():
-    def __init__(self, data: list, stop_words: list, tokenizer):
+    def __init__(self, data: list, stop_words =[], tokenizer = word_tokenize):
         self._data = data
+        self._tokenizer = tokenizer
         self._stopwords = stop_words
         self._score_matrix= np.zeros((len(data),len(data)))
         self._text_tok = []
         self._is_process = False 
     
-    def similarity_matrix(self):
+    def create_similarity_matrix(self, save_path = str) -> None:
         warnings.filterwarnings("ignore")
         for i in tqdm(range(len(self._data))):
             for j in range(len(self._data)):
-                candidate = word_tokenize(self._data[i])
-                reference = [word_tokenize(self._data[j])]
+                candidate = self._tokenizer(self._data[i])
+                reference = [self._tokenizer(self._data[j])]
                 self._score_matrix[i,j] = corpus_bleu([reference],[candidate],weights=[1,1,0,0])
-        return self._score_matrix
+        np.save(save_path,  self._score_matrix)
     
 class WordEmbedingRetrieval():
     
