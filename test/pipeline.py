@@ -2,7 +2,8 @@ import os
 import sys
 import json
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
-from model.feature_extraction import org_extractor, law_extractor, time_extractor, article_extractor
+from model.feature_extraction import org_extractor
+from model.feature_extraction import law_extractor
 
 def testpipe():
 
@@ -25,8 +26,8 @@ def testpipe():
         orgext = org_extractor.org_extractor(testcase['input'])
         org = orgext.find_org()
 
-        # lawext = law_extractor.law_extractor(testcase['input'])
-        # law = lawext.result
+        lawext = law_extractor.LawExtractor()
+        law = lawext.extract(testcase['input'])
 
         res.write(f'======== TEST {i+1:02d} ========\n')
         res.write(f'input_text: {testcase["input"]}\n')
@@ -50,24 +51,23 @@ def testpipe():
 
 
         # defined terms / orgaization
+        res.write('\nDEFINED TERMS:\n')
         if sorted(org) == sorted(testcase['output']['Defined terms']):
-            res.write(f'PASSED ===> org: {org}')
+            res.write(f'PASSED ===> org: {org}\n')
             o += 1
         
         else:
             res.write(f'FAILED ===> expected {testcase["output"]["Defined terms"]}, returned {org} \n')
 
 
-        # # law
-        # if law == testcase['output']['law']:
-        #     res.write(f'PASSED ===> law: {law}')
-        #     l += 1
+        # law
+        res.write('\nLAW:\n')
+        if law == testcase['output']['law']:
+            res.write(f'PASSED ===> law: {law}')
+            l += 1
         
-        # else:
-        #     res.write(f'FAILED ===> expected {testcase["output"]["law"]}, returned {law} \n')
-
-
-
+        else:
+            res.write(f'FAILED ===> expected {testcase["output"]["law"]}, returned {law} \n')
 
         res.write('\n')
 
