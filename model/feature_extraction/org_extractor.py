@@ -15,7 +15,8 @@ class org_extractor:
     chunker = Chunker(model=CHUNKER_PATH)
 
     def __init__(self, text) -> None:
-        self.text = text
+        self.txt = text
+        self.text = self.normalizer.normalize(self.txt)
 
     def ngrams(self, text, n):
         words = text.split()
@@ -23,7 +24,7 @@ class org_extractor:
         return [' '.join(ngram) for ngram in ngrams]
 
     def chunk_text(self):
-        self.text = self.normalizer.normalize(self.text)
+        
         tagged = self.tagger.tag(word_tokenize(self.text))
         chunks = tree2brackets(self.chunker.parse(tagged))
 
@@ -102,20 +103,18 @@ class org_extractor:
         for ng, otp in zip(ngs, output):
             for o in otp:
                 mtch = o.group(0)
-                if mtch in ng and mtch not in result:
+                if mtch in ng and mtch not in result and mtch in self.txt:
                     result.append(mtch)
         
         result = sorted(result, key=len, reverse=True)
         defined_terms = []
         for term in result:
-            if not any(term in other for other in defined_terms):
-                for m in re.finditer(term, self.text):
-                    if term not in defined_terms:
-                        # defined_terms.append((term, m.start(), m.end()))
-                        defined_terms.append(term)  
+            if not any(term in other[0] for other in defined_terms):
+                for m in re.finditer(term, self.txt):
+                    defined_terms.append((term, m.start(), m.end()))
         return defined_terms
 
 
-# text =  'طبق ماده 15 (1) دستورالعمل‌های انطباق با مقررات،«کمیته» باید حداکثر تا 31 اردیبهشت هر سال تشکیل جلسه دهد '
-# ext = org_extractor(text=text)
-# print(ext.find_org())
+text =  "عطف به نامه شماره ۹۱۹۲/۳۰۱۸۶ مورخ ۲۰/۲/۱۳۸۴ در اجرای اصل یکصد و بیست و سوم (۱۲۳) قانون اساسی جمهوری اسلامی ایران قانون مدیریت خدمات کشوری مصوب ۸/۷/۱۳۸۶ کمیسیون مشترک رسیدگی به لایحه مدیریت خدمات کشوری مجلس شورای اسلامی مطابق اصل هشتاد و پنجم (۸۵) قانون اساسی جمهوری اسلامی ایران که به مجلس شورای اسلامی تقدیم گردیده بود، پس از موافقت مجلس با اجرای آزمایشی آن به مدت پنج سال در جلسه علنی مورخ ۱۸/۱۱/۱۳۸۵ و تأیید شورای محترم نگهبان، به پیوست ارسال می گردد." 
+ext = org_extractor(text)
+print(ext.find_org())
