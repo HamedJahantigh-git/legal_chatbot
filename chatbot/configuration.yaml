@@ -1,8 +1,8 @@
 connectors:
   matrix:
     # Required
-    mxid:  #id goes here. bot_{funⅽtionaⅼity_of_the_bot}
-    password: #password goes here. 
+    mxid: '@miirzamiir:nitro.chat' #id goes here. bot_{funⅽtionaⅼity_of_the_bot}
+    password: 'A4251821sh' #password goes here. 
     rooms:
       'main': '#gp18-test:nitro.chat'
     enable_encryption: True
@@ -16,3 +16,6 @@ skills:
 
   - name: accept_invite
     path: skills/accept_invite.py
+
+  - name: extractor
+    path: skills/extractor.py
