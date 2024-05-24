@@ -95,14 +95,15 @@ class org_extractor:
                     otp = re.match(f'^{ng}.*', org)
 
                     if isinstance(otp, re.Match):
-                        t.append((otp))
+                        t.append((ng))
             
             output.append(t)
 
         result = []
         for ng, otp in zip(ngs, output):
             for o in otp:
-                mtch = o.group(0)
+                # mtch = o.group(0)
+                mtch = o
                 if mtch in ng and mtch not in result and mtch in self.txt:
                     result.append(mtch)
         
@@ -115,6 +116,6 @@ class org_extractor:
         return defined_terms
 
 
-text =  "عطف به نامه شماره ۹۱۹۲/۳۰۱۸۶ مورخ ۲۰/۲/۱۳۸۴ در اجرای اصل یکصد و بیست و سوم (۱۲۳) قانون اساسی جمهوری اسلامی ایران قانون مدیریت خدمات کشوری مصوب ۸/۷/۱۳۸۶ کمیسیون مشترک رسیدگی به لایحه مدیریت خدمات کشوری مجلس شورای اسلامی مطابق اصل هشتاد و پنجم (۸۵) قانون اساسی جمهوری اسلامی ایران که به مجلس شورای اسلامی تقدیم گردیده بود، پس از موافقت مجلس با اجرای آزمایشی آن به مدت پنج سال در جلسه علنی مورخ ۱۸/۱۱/۱۳۸۵ و تأیید شورای محترم نگهبان، به پیوست ارسال می گردد." 
-ext = org_extractor(text)
-print(ext.find_org())
+# text =  "هیت وزیزان در جلسه ۱۸/۴/۹۹ به پیشنهاد ۳۸۶۵۴ مورخ ۱/۳/۹۷ وزارت تعاون، کار و رفاه اجتماعی به اتسناد اصل یک و سی وهشتم قانون اساسی جمهوری اسلامی ایران آیین نامه اجرایی بند خ ماده ۸۷ قانون برنامه ششم توسعه اقتصادی و اجتماعی و فرهنگی جمهوری اسلامی ایران -مصوب۱۳۹۵- را به شرح زیر تصویب کرد" 
+# ext = org_extractor(text)
+# print(ext.find_org())
