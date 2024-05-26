@@ -46,8 +46,8 @@ class time_extractor(object):
     def find_dates(self, sentence):
         
         shamsi_date_regex_list ={
-            r'\b\d{4}\s*/\s*\d{1,2}\s*/\s*\d{1,2}\b',
-            r'\b\d{1,2}\s*/\s*\d{1,2}\s*/\s*\d{4}\b'
+            r'\b\d{2,4}\s*/\s*\d{1,2}\s*/\s*\d{1,2}\b',
+            r'\b\d{1,2}\s*/\s*\d{1,2}\s*/\s*\d{2,4}\b'
         }
         
         listOfDates = []
