@@ -44,7 +44,7 @@ class LawExtractor():
         return result
     
     def _regex_analysis(self, input, phrases: List[str])-> List[Tuple[str, int, int]]:
-        pattern = r"^(?:، \b\w+\b)+ و \b\w+\b"
+        pattern = r"^(?:، \b\w+\b)* و \b\w+\b|^و \b\w+\b"
         result = []
         start = 0
         for phrase in phrases:
@@ -54,7 +54,7 @@ class LawExtractor():
             first_match = ""
             if match:
                 first_match = match.group()
-            result.append(phrase+first_match)
+            result.append(phrase+" "+first_match)
         return result
     
     def _get_end_span(self, input: str, phrase: str, start: int) -> int:
@@ -66,5 +66,3 @@ class LawExtractor():
         index = end_index+len(end_search_text)
         return index
         
-    
-    

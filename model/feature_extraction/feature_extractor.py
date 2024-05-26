@@ -3,7 +3,7 @@ ROOT_DIR = "/home/miirzamiir/codes/nlp/legal_chatbot/model/feature_extraction"
 sys.path.append(ROOT_DIR)
 import article_extractor, law_extractor, org_extractor, time_extractor
 
-class FeatureExtractor:
+class FeatureExtractorAmir:
     def __init__(self, text) -> None:
         self.text = text
         
@@ -68,7 +68,7 @@ class Extractor(ABC):
         pass
     
 
-class FeatureExtrator_H:
+class FeatureExtrator:
     
     def __init__(
         self, normalizer = Normalizer,
@@ -84,22 +84,42 @@ class FeatureExtrator_H:
         self._law_extractor = LawExtractor(normalizer, 
                                            word_tokenizer,
                                            pos_tagger)
-        self._org_extractor = org_extractor()
+        # self._org_extractor = org_extractor()
+        # artext = article_extractor.article_extractor(self.text)
+        # self.arts = artext.result
+
+        # datext = time_extractor.time_extractor(self.text)
+        # self.dates = datext.result
+        
+        # orgext = org_extractor.org_extractor(self.text)
+        # self.orgs = orgext.find_org()
         
     def extract(self, input: str) -> List[dict]:
         result = []
+        span_bias = 0
         for sentence in self._sent_tokenizer(input):
             law_phrase = self._law_extractor.extract(sentence)
+            artext = article_extractor.article_extractor(sentence)
+            article_phrase = artext.result[0]
+
+            datext = time_extractor.time_extractor(sentence)
+            dates_phrase = datext.result
             
+            orgext = org_extractor(sentence)
+            orgs_phrase = orgext.find_org()
             result.append({
-                "law": self._get_span(law_phrase),
-                
+                "Article": self._get_span(sentence, article_phrase, span_bias),
+                "Law": self._get_span(sentence, law_phrase, span_bias),
+                "Organization": self._get_span(sentence, orgs_phrase, span_bias),
+                "Date": self._get_span(sentence, dates_phrase, span_bias)
             })
+            span_bias += len(sentence)
+        return result
     
     def doce_type_detection():
         pass
     
-    def _get_span(self, input: str, phrases: List[str]) -> List[Tuple[str, int, int]]:
+    def _get_span(self, input: str, phrases: List[str], bias: int) -> List[Tuple[str, int, int]]:
         index = 0
         result = []
         for phrase in phrases:
@@ -108,7 +128,7 @@ class FeatureExtrator_H:
             end_search_text = phrase[phrase.rfind(" "):]
             end_index = input.find(end_search_text, start_index)
             index = end_index+len(end_search_text)
-            result.append((phrase, "Span: "+f'[{start_index}, {index}]'))
+            result.append((phrase, "Span: "+f'[{start_index+bias}, {index+bias}]'))
         return result
     
 
