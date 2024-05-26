@@ -15,7 +15,8 @@ class org_extractor:
     chunker = Chunker(model=CHUNKER_PATH)
 
     def __init__(self, text) -> None:
-        self.text = text
+        self.txt = text
+        self.text = self.normalizer.normalize(self.txt)
 
     def ngrams(self, text, n):
         words = text.split()
@@ -23,7 +24,7 @@ class org_extractor:
         return [' '.join(ngram) for ngram in ngrams]
 
     def chunk_text(self):
-        self.text = self.normalizer.normalize(self.text)
+        
         tagged = self.tagger.tag(word_tokenize(self.text))
         chunks = tree2brackets(self.chunker.parse(tagged))
 
@@ -94,28 +95,27 @@ class org_extractor:
                     otp = re.match(f'^{ng}.*', org)
 
                     if isinstance(otp, re.Match):
-                        t.append((otp))
+                        t.append((ng))
             
             output.append(t)
 
         result = []
         for ng, otp in zip(ngs, output):
             for o in otp:
-                mtch = o.group(0)
-                if mtch in ng and mtch not in result:
+                # mtch = o.group(0)
+                mtch = o
+                if mtch in ng and mtch not in result and mtch in self.txt:
                     result.append(mtch)
         
         result = sorted(result, key=len, reverse=True)
         defined_terms = []
         for term in result:
-            if not any(term in other for other in defined_terms):
-                for m in re.finditer(term, self.text):
-                    if term not in defined_terms:
-                        # defined_terms.append((term, m.start(), m.end()))
-                        defined_terms.append(term)  
+            if not any(term in other[0] for other in defined_terms):
+                for m in re.finditer(term, self.txt):
+                    defined_terms.append((term, m.start(), m.end()))
         return defined_terms
 
 
-# text =  'طبق ماده 15 (1) دستورالعمل‌های انطباق با مقررات،«کمیته» باید حداکثر تا 31 اردیبهشت هر سال تشکیل جلسه دهد '
-# ext = org_extractor(text=text)
+# text =  "هیت وزیزان در جلسه ۱۸/۴/۹۹ به پیشنهاد ۳۸۶۵۴ مورخ ۱/۳/۹۷ وزارت تعاون، کار و رفاه اجتماعی به اتسناد اصل یک و سی وهشتم قانون اساسی جمهوری اسلامی ایران آیین نامه اجرایی بند خ ماده ۸۷ قانون برنامه ششم توسعه اقتصادی و اجتماعی و فرهنگی جمهوری اسلامی ایران -مصوب۱۳۹۵- را به شرح زیر تصویب کرد" 
+# ext = org_extractor(text)
 # print(ext.find_org())

@@ -24,7 +24,7 @@ class LawExtractor():
         pos_tag = self._pos_tagger.tag(tokens)
         first_phrases = self._pos_analysis(pos_tag)
         phrase = self._regex_analysis(normal_text, first_phrases)
-        return phrase, first_phrases
+        return phrase
     
     def _pos_analysis(self, pos_list: List) -> List:
         accept_tok = [index for index, tok in enumerate(pos_list)

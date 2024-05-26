@@ -12,7 +12,10 @@ connectors:
 
 skills:
   - name: help
-    path: skills/help_skill.py
+    path: chatbot/skills/help_skill.py
 
   - name: accept_invite
-    path: skills/accept_invite.py
+    path: chatbot/skills/accept_invite.py
+
+  - name: extractor
+    path: chatbot/skills/extractor.py

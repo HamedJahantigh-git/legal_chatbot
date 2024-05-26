@@ -14,7 +14,7 @@ class Run():
     def __init__(self) -> None:
         case_df = pd.read_csv("resource/case/case.csv")
         self._case_matcher = BM25Retrival(case_df.text.tolist())
-    
+        self._feature_extractor = FeatureExtrator()
     def run(self):
         input = " "
         while input != Command.END.value:
