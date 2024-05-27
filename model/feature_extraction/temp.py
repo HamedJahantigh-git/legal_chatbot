@@ -1,6 +1,7 @@
 import sys
 ROOT_DIR = "/home/miirzamiir/codes/nlp/legal_chatbot/model/feature_extraction"
 sys.path.append(ROOT_DIR)
+import article_extractor, law_extractor, org_extractor, time_extractor
 
 # class FeatureExtractorAmir:
 #     def __init__(self, text) -> None:
@@ -56,13 +57,14 @@ sys.path.append(ROOT_DIR)
 # from ..dataset.dataset_types import LegalDataset
 
 import re
-from hazm import *
-from typing import List
+from abc import ABC, abstractmethod
+from typing import List, Tuple
 from law_extractor import LawExtractor
 from org_extractor import OrgExtractor
-from time_extractor import TimeExtractor
 from article_extractor import ArticleExtractor
+from time_extractor import TimeExtractor
 
+from hazm import *
 
 
 class FeatureExtractor:
@@ -85,6 +87,7 @@ class FeatureExtractor:
         self._org_extractor = OrgExtractor(normalizer, pos_tagger, chunker)
         self._art_extractor = ArticleExtractor()
         self._time_extractor = TimeExtractor(normalizer, word_tokenizer, pos_tagger)
+
         
     def extract(self, input: str) -> List[dict]:
         result = []
@@ -95,6 +98,8 @@ class FeatureExtractor:
             art_phrase = self._art_extractor.extract(sentence, span_bias)
             org_phrase = self._org_extractor.extract(sentence, span_bias)
             time_phrase = self._time_extractor.extract(sentence, span_bias)
+
+
             result.append(
                 {
                     "Article": art_phrase,
@@ -103,11 +108,12 @@ class FeatureExtractor:
                     "Date": time_phrase
                 }
             )
+
+            
             match = re.search(pattern, input[span_bias+len(sentence)-1:])
             span_bias += len(sentence)+len(match.group(1))
-            
         return result
-
+    
 # text =  "هیئت وزیزان در جلسه ۱۸/۴/۹۹ به پیشنهاد ۳۸۶۵۴ مورخ ۱/۳/۹۷ وزارت تعاون، کار و رفاه اجتماعی به اتسناد اصل یک و سی وهشتم قانون اساسی جمهوری اسلامی ایران آیین نامه اجرایی بند خ ماده ۸۷ قانون برنامه ششم توسعه اقتصادی و اجتماعی و فرهنگی جمهوری اسلامی ایران -مصوب۱۳۹۵- را به شرح زیر تصویب کرد" 
 # ext = FeatureExtractor()
 # print(ext.extract(text))
