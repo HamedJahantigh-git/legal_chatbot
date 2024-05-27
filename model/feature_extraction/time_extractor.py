@@ -1,7 +1,6 @@
 import re
 from hazm import *
-from typing import List, Tuple
-from law_extractor import LawExtractor
+from typing import List
 
 
 class TimeExtractor(object):
@@ -42,7 +41,7 @@ class TimeExtractor(object):
             self._days_keyword = days
             self._number_keyword = numbers
         
-    def extract(self, sentence):
+    def extract(self, sentence, bias):
         
         shamsi_date_regex_list = [
             r'\b\d{2,4}\s*/\s*\d{1,2}\s*/\s*\d{1,2}\b',
@@ -67,10 +66,16 @@ class TimeExtractor(object):
         formatted_written_dates_2 = [' '.join(date).strip() for date in written_dates_2]
         listOfDates.extend(formatted_written_dates_2)
 
-        return listOfDates
+
+        result = []
+        for date in listOfDates:
+            for m in re.finditer(date, sentence):
+                result.append([date, m.start()+bias, m.end()+bias])
+
+        return result
 
 # Example usage
 # text = "عطف به نامه شماره ۹۱۹۲/۳۰۱۸۶ مورخ ۲۰/۲/۱۳۸۴ در اجرای اصل یکصد و بیست و سوم (۱۲۳) قانون اساسی جمهوری اسلامی ایران قانون مدیریت خدمات کشوری مصوب ۸/۷/۱۳۸۶ کمیسیون مشترک رسیدگی به لایحه مدیریت خدمات کشوری مجلس شورای اسلامی مطابق اصل هشتاد و پنجم (۸۵) قانون اساسی جمهوری اسلامی ایران که به مجلس شورای اسلامی تقدیم گردیده بود، پس از موافقت مجلس با اجرای آزمایشی آن به مدت پنج سال در جلسه علنی مورخ 18/7/1385 و تأیید شورای محترم نگهبان در تاریخ بیست و چهارم مهر ماه، به پیوست ارسال می گردد و در ۲۰ اردیبهشت هر ماه."
 # extractor = TimeExtractor()
-# result = extractor.extract(text)
+# result = extractor.extract(text, 0)
 # print(result)

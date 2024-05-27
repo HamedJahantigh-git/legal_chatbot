@@ -5,12 +5,12 @@ import re
 class OrgExtractor:
 
     def __init__(self,
-        normalizer = Normalizer(),
+        normalizer = Normalizer,
         tagger = POSTagger(model='resource/hazm_model/pos_tagger.model'),
         chunker = Chunker(model='resource/hazm_model/chunker.model')) -> None:
 
         self.ROLES = ['NP', 'PP', 'VP', 'ADJP', 'ADVP']
-        self.normalizer = normalizer
+        self.normalizer = normalizer()
         self.tagger = tagger
         self.content = open('resource/org/orgs.txt', 'r+').readlines() 
         self.chunker = chunker
@@ -76,53 +76,6 @@ class OrgExtractor:
 
         return ngs
 
-    def normalize_text(self, text):
-        return re.sub(r'\W+', '', text)
-
-    def find_token_sequence(self, text, phrase):
-        """Find the substring in the text that matches the normalized version of the phrase without taking tokens as input."""
-        # Tokenize the text and normalize the tokens
-        tokens = word_tokenize(text)
-        normalized_tokens = [(self.normalize_text(token), index) for index, token in enumerate(tokens) if self.normalize_text(token)]
-        
-        # Normalize the phrase
-        normalized_phrase = self.normalize_text(phrase)
-        
-        # Concatenate the normalized tokens into one string for comparison
-        concatenated_tokens = ''.join(token for token, _ in normalized_tokens)
-        
-        # Find the normalized phrase within the concatenated normalized tokens
-        start_pos = concatenated_tokens.find(normalized_phrase)
-        if start_pos == -1:
-            return None  # No match found
-        
-        # Determine the bounds of the matching sequence
-        end_pos = start_pos + len(normalized_phrase)
-        current_pos = 0
-        start_token_index = None
-        end_token_index = None
-        
-        for token, original_index in normalized_tokens:
-            prev_pos = current_pos
-            current_pos += len(token)
-            if current_pos > start_pos and start_token_index is None:
-                start_token_index = original_index
-            if current_pos >= end_pos:
-                end_token_index = original_index
-                break
-
-        # Extract the exact substring from the original text
-        if start_token_index is not None and end_token_index is not None:
-            # Construct the substring based on token indices
-            start_char_pos = text.find(tokens[start_token_index])
-            if end_token_index + 1 < len(tokens):
-                end_char_pos = text.find(tokens[end_token_index + 1])
-            else:
-                end_char_pos = len(text)
-            return text[start_char_pos:end_char_pos]
-
-        return None
-
     def extract(self, text, bias):
 
         txt = text
@@ -148,18 +101,18 @@ class OrgExtractor:
         result = []
         for ng, otp in zip(ngs, output):
             for o in otp:
-                seq = self.find_token_sequence(txt, o)
-                if o in ng and o not in result and seq:
-                    result.append(seq)
+                # seq = self.find_token_sequence(txt, o)
+                if o in ng and o not in result:
+                    result.append(o)
         
         result = sorted(result, key=len, reverse=True)
         defined_terms = []
         for term in result:
             if not any(term in other[0] for other in defined_terms):
                 for m in re.finditer(term, txt):
-                    defined_terms.append((term, m.start()+bias, m.end()+bias))
+                    defined_terms.append([term, m.start()+bias, m.end()+bias])
         return defined_terms
 
-# text = "عطف به نامه شماره ۱۳۹۵۷۴ مورخ ۲۶/۱۰/۱۳۹۴ در اجرای اصل یکصد و بیست و سوم(۱۲۳) قانون اساسی جمهوری‌ اسلامی‌ ایران قانون برنامه پنجساله ششم توسعه اقتصادی، اجتماعی و فرهنگی جمهوری اسلامی ایران (۱۴۰۰- ۱۳۹۶) مصوب جلسه علنی روز شنبه مورخ ۱۴/۱۲/۱۳۹۵ مجلس که با عنوان «لایحه احکام مورد نیاز اجرای بـرنـامـه شـشـم تـوسـعـه اقتصادی، اجتماعی و فرهنگی جمهوری اسلامی ایران (۱۳۹۹-۱۳۹۵)» به مجلس شورای اسلامی تقدیم و مطابق اصل یکصد و دوازدهم (۱۱۲) قانون اساسی جمهوری‌اسلامی ایران از سوی مجمع تشخیص مصلحت نظام موافق با مصلحت نظام تشخیص داده شده است، به پیوست ابلاغ می‌گردد."  
+# text = "عطف به نامه شماره ۹۱۹۲/۳۰۱۸۶ مورخ ۲۰/۲/۱۳۸۴ در اجرای اصل یکصد و بیست و سوم (۱۲۳) قانون اساسی جمهوری اسلامی ایران قانون مدیریت خدمات کشوری مصوب ۸/۷/۱۳۸۶ کمیسیون مشترک رسیدگی به لایحه مدیریت خدمات کشوری مجلس شورای اسلامی مطابق اصل هشتاد و پنجم ۸۵ قانون اساسی جمهوری اسلامی ایران که به مجلس شورای اسلامی تقدیم گردیده بود، پس از موافقت مجلس با اجرای آزمایشی آن به مدت پنج سال در جلسه علنی مورخ ۱۸/۱۱/۱۳۸۵ و تأیید شورای نگهبان، به پیوست ارسال می گردد."
 # ext = OrgExtractor()
-# print(ext.extract(text, 10))
+# print(ext.extract(text, 0))

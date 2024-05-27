@@ -1,8 +1,10 @@
 import sys
 from opsdroid.skill import Skill
 from opsdroid.matchers import match_regex
+
 ROOT_DIR = "/home/miirzamiir/codes/nlp/legal_chatbot"
 sys.path.append(ROOT_DIR)
+
 from setup import Run
 
 class ExtractorSkill(Skill):
@@ -11,9 +13,8 @@ class ExtractorSkill(Skill):
         result = "متن وارد شده پردازش و اطلاعات کلیدی زیر از آن استخراج شد:\n\n"
         runner = Run()
         features, cases = runner.run(message.text)
-
         for feature in features:
-            result += f'در جمله ی {feature['Sentence']}:\n'
+            result += f"در جمله ی {feature['Sentence']}:\n"
 
             result += 'مواد اشاره شده در متن:\n'
             if feature['Article'] == []:
@@ -43,10 +44,15 @@ class ExtractorSkill(Skill):
                 for date in feature['Date']:
                     result += f'{date[0]}\n(از کاراکتر {date[1]} تا کاراکتر {date[2]})\n\n'
 
-            result += '\n\n\n'
+            result += '\n\n'
+        
+        if cases:
             result += 'همچنین با توجه به متن، پرونده های مشابه زیر استخراج شدند:\n\n'
             for i, case in enumerate(cases):
                 result += f'{i}) {case[0]}\n'
                 result += f'میزان مشابهت: {case[1]}\n\n'
+
+        else:
+            result += 'هیچ پرونده مشابهی پیدا نشد.'
 
         await message.respond(result)

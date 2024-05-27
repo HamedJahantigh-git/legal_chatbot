@@ -1,11 +1,11 @@
 import os
 import sys
 import json
+from hazm import *
+
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
-from model.feature_extraction import org_extractor
-from model.feature_extraction import law_extractor
-from model.feature_extraction import time_extractor
-from model.feature_extraction import article_extractor
+
+from model.feature_extraction import  org_extractor, time_extractor, article_extractor, law_extractor
 
 
 def testpipe():
@@ -17,23 +17,24 @@ def testpipe():
 
     passed, o, l, d, s = 0, 0, 0, 0, 0
     total = len(testcases)
+    
+    ae = article_extractor.ArticleExtractor()
+    le = law_extractor.LawExtractor()
+    oe = org_extractor.OrgExtractor()
+    te = time_extractor.TimeExtractor()
+
+
 
     for i, testcase in enumerate(testcases):
-        
-        artext = article_extractor.article_extractor(testcase['input'])
-        art = artext.result
+        text = testcase['input']
 
-        datext = time_extractor.time_extractor(testcase['input'])
-        date = datext.result
-        
-        orgext = org_extractor.org_extractor(testcase['input'])
-        org = orgext.find_org()
-
-        lawext = law_extractor.LawExtractor()
-        law = lawext.extract(testcase['input'])
+        art = ae.extract(text, 0)
+        law = le.extract(text, 0)
+        org = oe.extract(text, 0)
+        date = te.extract(text, 0)
 
         res.write(f'======== TEST {i+1:02d} ========\n')
-        res.write(f'INPUT_TEXT: {testcase["input"]}\n')
+        res.write(f'INPUT_TEXT: {text}\n')
 
         # statute reference / article
         res.write('\nARTICLE:\n')

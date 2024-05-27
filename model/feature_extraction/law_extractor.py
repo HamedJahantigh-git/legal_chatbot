@@ -70,6 +70,6 @@ class LawExtractor():
             end_search_text = phrase[phrase.rfind(" "):]
             end_index = input.find(end_search_text, start_index)
             index = end_index+len(end_search_text)
-            result.append((phrase, start_index+bias, index+bias))
+            result.append([phrase, start_index+bias, index+bias])
         return result
         
