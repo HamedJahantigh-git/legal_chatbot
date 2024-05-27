@@ -123,7 +123,7 @@ class OrgExtractor:
 
         return None
 
-    def find_org(self, text):
+    def extract(self, text, bias):
 
         txt = text
         text = self.normalizer.normalize(text=text)
@@ -157,9 +157,9 @@ class OrgExtractor:
         for term in result:
             if not any(term in other[0] for other in defined_terms):
                 for m in re.finditer(term, txt):
-                    defined_terms.append((term, m.start(), m.end()))
+                    defined_terms.append((term, m.start()+bias, m.end()+bias))
         return defined_terms
 
-text =  "به استناد ماده 94 قانون آیین دادرسی مدنی، هریک از اصحاب دعوا می‌توانند به جای خود وکیل به دادگاه معرفی نمایند ولی در مواردی که دادرس حضور شخص خواهان یا خوانده یا هر دو را لازم بداند این موضوع در برگ اخطاریه قید می‌شود. دراین صورت شخصا مکلف به حضور خواهند بود." 
-ext = OrgExtractor()
-print(ext.find_org(text))
+# text = "عطف به نامه شماره ۱۳۹۵۷۴ مورخ ۲۶/۱۰/۱۳۹۴ در اجرای اصل یکصد و بیست و سوم(۱۲۳) قانون اساسی جمهوری‌ اسلامی‌ ایران قانون برنامه پنجساله ششم توسعه اقتصادی، اجتماعی و فرهنگی جمهوری اسلامی ایران (۱۴۰۰- ۱۳۹۶) مصوب جلسه علنی روز شنبه مورخ ۱۴/۱۲/۱۳۹۵ مجلس که با عنوان «لایحه احکام مورد نیاز اجرای بـرنـامـه شـشـم تـوسـعـه اقتصادی، اجتماعی و فرهنگی جمهوری اسلامی ایران (۱۳۹۹-۱۳۹۵)» به مجلس شورای اسلامی تقدیم و مطابق اصل یکصد و دوازدهم (۱۱۲) قانون اساسی جمهوری‌اسلامی ایران از سوی مجمع تشخیص مصلحت نظام موافق با مصلحت نظام تشخیص داده شده است، به پیوست ابلاغ می‌گردد."  
+# ext = OrgExtractor()
+# print(ext.extract(text, 10))
