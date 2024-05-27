@@ -2,7 +2,7 @@ from hazm import *
 import re
 
 
-class org_extractor:
+class OrgExtractor:
 
     def __init__(self,
         normalizer = Normalizer(),
@@ -160,7 +160,6 @@ class org_extractor:
                     defined_terms.append((term, m.start(), m.end()))
         return defined_terms
 
-
-# text =  "به استناد ماده 94 قانون آیین دادرسی مدنی، هریک از اصحاب دعوا می‌توانند به جای خود وکیل به دادگاه معرفی نمایند ولی در مواردی که دادرس حضور شخص خواهان یا خوانده یا هر دو را لازم بداند این موضوع در برگ اخطاریه قید می‌شود. دراین صورت شخصا مکلف به حضور خواهند بود." 
-# ext = org_extractor()
-# print(ext.find_org(text))
+text =  "به استناد ماده 94 قانون آیین دادرسی مدنی، هریک از اصحاب دعوا می‌توانند به جای خود وکیل به دادگاه معرفی نمایند ولی در مواردی که دادرس حضور شخص خواهان یا خوانده یا هر دو را لازم بداند این موضوع در برگ اخطاریه قید می‌شود. دراین صورت شخصا مکلف به حضور خواهند بود." 
+ext = OrgExtractor()
+print(ext.find_org(text))

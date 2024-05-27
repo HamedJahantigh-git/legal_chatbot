@@ -1,7 +1,7 @@
 import re
 from hazm import *
 
-class article_extractor(object):
+class ArticleExtractor(object):
 
     articleKeywords = {'ماده', 'مواد', 'اصل', 'اصول'}
     lawKeywords = ['قانون', 'قوانین', 'آیین نامه', 'آیین‌نامه', 'اساس نامه', 'اساس‌نامه']
@@ -49,5 +49,5 @@ class article_extractor(object):
         return (start_index, start_index + len(normalized_substring) - 1) if start_index != -1 else (-1, -1)
 
 # text = "عطف به نامه شماره ۹۱۹۲/۳۰۱۸۶ مورخ ۲۰/۲/۱۳۸۴ در اجرای اصل یکصد و بیست و سوم (۱۲۳) قانون اساسی جمهوری اسلامی ایران قانون مدیریت خدمات کشوری مصوب ۸/۷/۱۳۸۶ کمیسیون مشترک رسیدگی به لایحه مدیریت خدمات کشوری مجلس شورای اسلامی مطابق اصل هشتاد و پنجم (۸۵) قانون اساسی جمهوری اسلامی ایران که به مجلس شورای اسلامی تقدیم گردیده بود، پس از موافقت مجلس با اجرای آزمایشی آن به مدت پنج سال در جلسه علنی مورخ ۱۸/۱۱/۱۳۸۵ و تأیید شورای محترم نگهبان، به پیوست ارسال می گردد."
-# extractor = article_extractor(text)
+# extractor = ArticleExtractor(text)
 # print(extractor.result)
