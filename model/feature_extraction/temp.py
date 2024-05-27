@@ -22,34 +22,7 @@ import article_extractor, law_extractor, org_extractor, time_extractor
 #     def extract(self):
 #         self.result = "متن وارد شده پردازش و اطلاعات کلیدی زیر از آن استخراج شد؛\n\n"
 
-#         self.result += 'مواد اشاره شده در متن:\n'
-#         if self.arts == []:
-#             self.result += 'هیچ عنوان ماده ای پیدا نشد.\n'
-#         else:
-#             for art in self.arts:
-#                 self.result += f'{art[0]}\n(از کاراکتر {art[1]} تا کاراکتر {art[2]})\n\n'
         
-#         self.result += '\nقوانین اشاره شده در متن:\n'
-#         if self.laws == []:
-#             self.result += 'هیچ عنوان قانونی پیدا نشد.\n'
-#         else:
-#             for law in self.laws:
-#                 self.result += f'{law[0]}\n(از کاراکتر {law[1]} تا کاراکتر {law[2]})\n\n'
-
-#         self.result += '\nنام نهادهای اشاره شده در متن:\n'
-#         if self.orgs == []:
-#             self.result += 'هیچ نام نهادی پیدا نشد.\n'
-#         else:
-#             for org in self.orgs:
-#                 self.result += f'{org[0]}\n(از کاراکتر {org[1]} تا کاراکتر {org[2]})\n\n'
-
-#         self.result += '\nتاریخ های اشاره شده در متن:\n'
-#         if self.dates == []:
-#             self.result += 'هیچ تاریخی پیدا نشد.\n'
-#         else:
-#             for date in self.dates:
-#                 self.result += f'{date[0]}\n(از کاراکتر {date[1]} تا کاراکتر {date[2]})\n\n'
-
         
 #         return self.result
 
@@ -102,6 +75,7 @@ class FeatureExtractor:
 
             result.append(
                 {
+                    "Sentence": sentence,
                     "Article": art_phrase,
                     "Law": law_phrase,
                     "Organization": org_phrase,
