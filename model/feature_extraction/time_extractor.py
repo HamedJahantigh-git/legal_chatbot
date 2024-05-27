@@ -1,15 +1,15 @@
-from typing import List, Tuple
-from hazm import *
 import re
+from hazm import *
+from typing import List, Tuple
+from law_extractor import LawExtractor
 
-from model.feature_extraction.law_extractor import LawExtractor
 
-class time_extractor(object):
+class TimeExtractor(object):
 
     def __init__(
             self, normalizer = Normalizer,
             tokenizer = word_tokenize, 
-            pos_tagger = POSTagger(model='../../resource/hazm_model/pos_tagger.model'),
+            pos_tagger = POSTagger(model='resource/hazm_model/pos_tagger.model'),
             months = [
                 "فروردین", "اردیبهشت", "خرداد", "تیر", "مرداد", "شهریور",
                 "مهر", "آبان", "آذر", "دی", "بهمن", "اسفند"
@@ -41,13 +41,8 @@ class time_extractor(object):
             self._month_keyword = months
             self._days_keyword = days
             self._number_keyword = numbers
-
-    def extract(self, input: str) -> List[Tuple[str, int, int]]:
-        datas = self.find_dates(input)
-        extractor = LawExtractor()
-        return extractor._get_span(input, datas)
         
-    def find_dates(self, sentence):
+    def extract(self, sentence):
         
         shamsi_date_regex_list = [
             r'\b\d{2,4}\s*/\s*\d{1,2}\s*/\s*\d{1,2}\b',
@@ -76,6 +71,6 @@ class time_extractor(object):
 
 # Example usage
 # text = "عطف به نامه شماره ۹۱۹۲/۳۰۱۸۶ مورخ ۲۰/۲/۱۳۸۴ در اجرای اصل یکصد و بیست و سوم (۱۲۳) قانون اساسی جمهوری اسلامی ایران قانون مدیریت خدمات کشوری مصوب ۸/۷/۱۳۸۶ کمیسیون مشترک رسیدگی به لایحه مدیریت خدمات کشوری مجلس شورای اسلامی مطابق اصل هشتاد و پنجم (۸۵) قانون اساسی جمهوری اسلامی ایران که به مجلس شورای اسلامی تقدیم گردیده بود، پس از موافقت مجلس با اجرای آزمایشی آن به مدت پنج سال در جلسه علنی مورخ 18/7/1385 و تأیید شورای محترم نگهبان در تاریخ بیست و چهارم مهر ماه، به پیوست ارسال می گردد و در ۲۰ اردیبهشت هر ماه."
-# extractor = time_extractor()
+# extractor = Time()
 # result = extractor.extract(text)
 # print(result)

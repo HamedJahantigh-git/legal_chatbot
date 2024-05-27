@@ -7,7 +7,7 @@ class LawExtractor():
     def __init__(
         self, normalizer = Normalizer,
         tokenizer = word_tokenize, 
-        pos_tagger = POSTagger(model='../../resource/hazm_model/pos_tagger.model'),
+        pos_tagger = POSTagger(model='resource/hazm_model/pos_tagger.model'),
         keywords = [
         'قانون' , 'قوانین' , 'آیین نامه'  , 'آیین‌نامه' ,
         'اساس نامه' , 'اساس‌نامه']) -> None:
