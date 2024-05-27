@@ -17,14 +17,14 @@ class LawExtractor():
         self._pos_tagger = pos_tagger
         self._keywords = keywords
         
-    def extract(self, input: str) -> List[str]:
+    def extract(self, input: str, bias: int) -> List[str]:
         normal_text = self._normalizer.normalize(input)
         normal_text = normal_text.replace("،", " ،")
         tokens = self._tokenizer(normal_text)
         pos_tag = self._pos_tagger.tag(tokens)
         first_phrases = self._pos_analysis(pos_tag)
         phrase = self._regex_analysis(normal_text, first_phrases)
-        return phrase
+        return self._get_span(input, phrase, bias)
     
     def _pos_analysis(self, pos_list: List) -> List:
         accept_tok = [index for index, tok in enumerate(pos_list)
@@ -35,11 +35,6 @@ class LawExtractor():
             while ("EZ" in pos_list[index][1])or\
                 ("EZ" in pos_list[index-1][1]):
                 index += 1  
-            # while (pos_list[index][0] == "،"  and (pos_list[index+2][0] in ["،", 'و']))or\
-            #     (pos_list[index][0] == "و"  and (pos_list[index-2][0] == "،"))or\
-            #     (pos_list[index-1][0] == "،" and (pos_list[index+1][0] in ["،", 'و'])or\
-            #     (pos_list[index-1][0] == "و" )):
-            #     index += 1
             result.append(" ".join([word for word,_ in pos_list[i:index]]))
         return result
     
@@ -65,4 +60,16 @@ class LawExtractor():
         end_index = input.find(end_search_text, start_index)
         index = end_index+len(end_search_text)
         return index
+    
+    def _get_span(self, input: str, phrases: List[str], bias: int) -> List[Tuple[str, int, int]]:
+        index = 0
+        result = []
+        for phrase in phrases:
+            start_search_text = phrase[:phrase.find(" ")]
+            start_index = input.find(start_search_text, index)
+            end_search_text = phrase[phrase.rfind(" "):]
+            end_index = input.find(end_search_text, start_index)
+            index = end_index+len(end_search_text)
+            result.append((phrase, start_index+bias, index+bias))
+        return result
         
