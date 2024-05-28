@@ -1,13 +1,13 @@
 connectors:
   matrix:
     # Required
-    mxid:  '@miirzamiir:nitro.chat' #id goes here. bot_{funⅽtionaⅼity_of_the_bot}
-    password: 'A4251821sh' #password goes here. 
+    mxid: "@nlp-gp-18:matrix.org" #id goes here. 
+    password: 'Group18nlp!' #password goes here. 
     rooms:
-      'main': '#gp18-test:nitro.chat'
+      'main': '#gp18:matrix.org'
     enable_encryption: True
     # Optional
-    homeserver: "https://nitro.chat"
+    homeserver: "https://matrix.org"
     nick: "NLP_HW2_18"  # The nick will be set on startup
 
 skills:
