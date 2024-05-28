@@ -11,6 +11,8 @@ class ExtractorSkill(Skill):
     @match_regex(r'^(?!راهنما$)')
     async def extract(self, message):
         result = "متن وارد شده پردازش و اطلاعات کلیدی زیر از آن استخراج شد:\n\n"
+        await message.respond(result)
+        result = ''
         runner = Run()
         features, cases = runner.run(message.text)
         for feature in features:
@@ -44,15 +46,21 @@ class ExtractorSkill(Skill):
                 for date in feature['Date']:
                     result += f'{date[0]}\n(از کاراکتر {date[1]} تا کاراکتر {date[2]})\n\n'
 
-            result += '\n\n'
-        
-        if cases:
-            result += 'همچنین با توجه به متن، پرونده های مشابه زیر استخراج شدند:\n\n'
-            for i, case in enumerate(cases):
-                result += f'{i}) {case[0]}\n'
-                result += f'میزان مشابهت: {case[1]}\n\n'
+            await message.respond(result)
+            print(result)
+            result = ''
 
+        result += 'همچنین با توجه به متن، پرونده های مشابه زیر استخراج شدند:\n\n'
+        await message.respond(result)
+        result = ''
+
+        if cases:
+            for i, case in enumerate(cases):
+                result += f'{i+1}) {case[0]}\n'
+                result += f'میزان مشابهت: {case[1]}\n\n'
+                await message.respond(result)
         else:
             result += 'هیچ پرونده مشابهی پیدا نشد.'
+            await message.respond(result)
 
-        await message.respond(result)
+

@@ -15,15 +15,23 @@ class Run():
     def run(self, input: str):
         features = self._feature_extractor.extract(input)
         
-        pattern = r'<پرونده: (\d+)>'
+        pattern = r'<(\d+)>$'
         match = re.search(pattern, input)
         if match:
             number = int(match.group(1))
-            case = self._case_matcher.get_similar_text(input, number)
+            cases = self._case_matcher.get_similar_text(input, number)
+            print('matched')
         else:
-            case = None
-        return features, case             
+            cases = None
+            print('not matched')
 
+        return features, cases          
+
+
+# text = "بنا بر اعلام گزارش پایگاه اطلاع رسانی دولت، هیئت وزیران در جلسه ۱۳۹۷/۱/۲۲ به استناد اصل یکصد و سی و هشتم قانون اساسی جمهوری اسلامی ایران و تبصره (۳) ماده (۷) قانون مبارزه با قاچاق کالا و ارز – مصوب ۱۳۹۲- و به منظور ساماندهی و مدیریت بازار ارز تصویب کرد."
+# text += '<3>'
+# # print(text)
 # r = Run()
-# a = r.run("بنا بر اعلام گزارش پایگاه اطلاع رسانی دولت، هیئت وزیران در جلسه ۱۳۹۷/۱/۲۲ به استناد اصل یکصد و سی و هشتم قانون اساسی جمهوری اسلامی ایران و تبصره (۳) ماده (۷) قانون مبارزه با قاچاق کالا و ارز – مصوب ۱۳۹۲- و به منظور ساماندهی و مدیریت بازار ارز تصویب کرد. <پرونده:3 >")
+# a = r.run(text)
 # print(a)
+# # <پرونده:۳>
