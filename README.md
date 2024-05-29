@@ -1,5 +1,5 @@
 # Legal Chatbot ⚖️
-### Homework #2 for NLP course Spring 02-03 at Sharif University - [Dr Ehsaneddin Asgari](https://github.com/ehsanasgari)
+### Homework #2 for NLP course Spring 02-03 at Sharif University - [Dr. Ehsaneddin Asgari](https://github.com/ehsanasgari)
 
 Legal chatbot is a handy assistant which can be started on [matrix](https://matrix.org). It is able to extract legal features from the input text and find similar law cases. 
 
@@ -16,4 +16,4 @@ Legal chatbot is a handy assistant which can be started on [matrix](https://matr
 3. Run the project by `sh start.sh`. 🚀
 
 #### Team members:
-[Hamed Jahantigh](https://github.com/HamedJahantigh-git)  -  [Amirmohamad Shakuri](https://github.com/miirzamiir)  -  [Zahra Maleki](https://github.com/zzmaleki)
+##### [Hamed Jahantigh](https://github.com/HamedJahantigh-git)   &emsp;     [Amirmohamad Shakuri](https://github.com/miirzamiir)   &emsp;    [Zahra Maleki](https://github.com/zzmaleki)
