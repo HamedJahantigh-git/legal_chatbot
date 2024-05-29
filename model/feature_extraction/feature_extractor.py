@@ -1,5 +1,5 @@
 import sys
-ROOT_DIR = "/home/miirzamiir/codes/nlp/legal_chatbot/model/feature_extraction"
+ROOT_DIR = "/home/miirzamiir/codes/mylegalchatbot/legal_chatbot/model/feature_extraction"
 sys.path.append(ROOT_DIR)
 
 import re
