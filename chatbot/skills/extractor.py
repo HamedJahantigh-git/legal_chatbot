@@ -2,7 +2,7 @@ import sys
 from opsdroid.skill import Skill
 from opsdroid.matchers import match_regex
 
-ROOT_DIR = "/home/miirzamiir/codes/mylegalchatbot/legal_chatbot"
+ROOT_DIR = ""
 sys.path.append(ROOT_DIR)
 
 from setup import Run
