@@ -27,6 +27,7 @@ class Run():
         f = open('cases.txt', 'r+')
         f.flush()
         if cases:
+            f.write(f'جمله ی {input}\n\n')
             f.write('پرونده های زیر پیدا شدند:\n')
 
             for i, case in enumerate(cases):
